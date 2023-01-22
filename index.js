@@ -18,6 +18,9 @@ app.use( express.json() );
 // Database connection
 dbConnection();
 
+// public directory( public folder )
+app.use( express.static('public') );
+
 // routes
 app.use( '/api/users', require('./routes/route_user') );
 app.use( '/api/login', require('./routes/route_auth') );

@@ -2,6 +2,9 @@ const { response } = require("express");
 const bcrypt = require('bcryptjs');
 const User = require('../models/user');
 const { generateJWT } = require("../helpers/generateJWT");
+const verifyGoogle = require("../helpers/google-verify");
+
+
 const Login = async (req, res = response) => {
 
     const { email, password } = req.body;
@@ -44,9 +47,80 @@ const Login = async (req, res = response) => {
 
 };
 
+const LoginGoogle = async (req, res=response) => {
+
+    const tokenGoogle = req.body.token;
+
+    const { name, email, picture } = await verifyGoogle(tokenGoogle);
+
+    let user;
+    
+    try {
+
+        const userDB = await User.find({email});
+        if ( !userDB ) {
+            user = new User({
+                name,
+                email,
+                password: '@@@', // user is registering with google and not with normal login
+                img: picture,
+                google: true
+            })
+        } else {
+            user = userDB;
+            user.google = true; // user have both authentication
+        }
+    
+        // generate JWT
+        const token = await generateJWT(userDB._id);
+    
+        // save user
+        await user.save();
+
+        res.json({
+            ok: true,
+            user,
+            token
+        })
+        
+    } catch (error) {
+        console.log(error);
+        res.json({
+            ok: false,
+            msg: 'Google Token not valid',
+        })
+    }
+
+};
+
+const RevalidateToken = async (req, res=response) => {
+
+    try {
+
+        const uid = req.uid;
+
+        // generate new jwt
+        const token = await generateJWT( uid );
+        
+        res.status(200).json({
+            ok: true,
+            token
+        })
+
+    } catch (error) {
+        res.status(401).json({
+            ok: false,
+            msg: 'Token has expired or is invalid'
+        })
+    }
+
+}
+
 
 
 
 module.exports = {
-    Login
+    Login,
+    LoginGoogle,
+    RevalidateToken
 }

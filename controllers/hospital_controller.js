@@ -43,11 +43,30 @@ const createHospital = async ( req, res = response ) => {
 
 };
 
-const updateHospital = ( req, res = response ) => {
+const updateHospital = async ( req, res = response ) => {
+
+    const id = req.params.id;
+    const uid = req.uid;
 
     try {
 
+        const userDB = await Hospital.findById(id);
+        if ( !userDB ) {
+            res.status(201).json({
+                ok: false,
+                msg: `Hospital with ID: ${id} not found`  
+            })
+        };
+        const changesHospital = {
+            ...req.body,
+            user: uid
+        };
+        const updatedHospital = await Hospital.findByIdAndUpdate(id, changesHospital, { new: true });
 
+        res.status(201).json({
+            ok: true,
+            hospital: updatedHospital,            
+        })
         
     } catch (error) {
         handleErrosDB(error)
@@ -55,11 +74,27 @@ const updateHospital = ( req, res = response ) => {
 
 };
 
-const deleteHospital = ( req, res = response ) => {
+const deleteHospital = async ( req, res = response ) => {
+
+    const id = req.params.id;
+    // const uid = req.uid;
 
     try {
 
+        const hospitalDB = await Hospital.findById(id);
+        if ( !hospitalDB ) {
+            res.status(201).json({
+                ok: false,
+                msg: `Hospital with ID: ${id} not found`  
+            })
+        };
 
+        await Hospital.findByIdAndDelete(id);
+
+        res.status(201).json({
+            ok: true,
+            msg: 'Deleted successfully'          
+        })
         
     } catch (error) {
         handleErrosDB(error)

@@ -34,25 +34,16 @@ router.post('/',
 // private
 router.put('/:id',
     [
-        check('email', 'Email is required').not().isEmpty(),
-        check('email', 'Email format is incorrect').isEmail(),
-        check('password', 'Password is required').not().isEmpty(),
+        validateJWT,
+        check('name', 'Name is required').not().isEmpty(),
+        check('hospital', 'Hospital should be a Mongo Id').isMongoId(),
         validateFields
     ],
     updateDoctor
 )
 
 // private
-router.delete('/:id',
-    [
-        check('email', 'Email is required').not().isEmpty(),
-        check('email', 'Email format is incorrect').isEmail(),
-        check('password', 'Password is required').not().isEmpty(),
-        validateFields
-    ],
-    deleteDoctor
-    
-)
+router.delete('/:id', validateJWT, deleteDoctor)
 
 
 module.exports = router;

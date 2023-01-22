@@ -38,25 +38,14 @@ router.post('/',
 // private
 router.put('/:id',
     [
-        check('email', 'Email is required').not().isEmpty(),
-        check('email', 'Email format is incorrect').isEmail(),
-        check('password', 'Password is required').not().isEmpty(),
+        check('name', 'Name is required').not().isEmpty(),
         validateFields
     ],
     updateHospital
 )
 
 // private
-router.delete('/:id',
-    [
-        check('email', 'Email is required').not().isEmpty(),
-        check('email', 'Email format is incorrect').isEmail(),
-        check('password', 'Password is required').not().isEmpty(),
-        validateFields
-    ],
-    deleteHospital
-    
-)
+router.delete('/:id', validateJWT, deleteHospital )
 
 
 module.exports = router;
