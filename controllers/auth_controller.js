@@ -24,7 +24,7 @@ const Login = async (req, res = response) => {
         if ( !validPass ) {
             return res.status(404).json({
                 ok: false,
-                msg: `Those credentials are not exist`
+                msg: `Those credentials do not exist`
             })
         }
 
@@ -101,9 +101,12 @@ const RevalidateToken = async (req, res=response) => {
 
         // generate new jwt
         const token = await generateJWT( uid );
+
+        const user = await User.findById(uid);
         
         res.status(200).json({
             ok: true,
+            user,
             token
         })
 

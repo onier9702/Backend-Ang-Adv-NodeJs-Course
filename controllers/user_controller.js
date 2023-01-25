@@ -14,7 +14,7 @@ const getUser = async ( req = request, res ) => {
 
         const [ count, users ] = await Promise.all([
             User.countDocuments(),
-            User.find({}, 'name email img')
+            User.find({}, 'name email img role google')
                                 .skip( skip )
                                 .limit( limit )
         ]) 
@@ -93,7 +93,16 @@ const updateUser = async ( req, res = response) => {
                     msg: `The email: ${email} already was taken`
                 })
             }
-            restUser.email = email;
+            // just user logged in with no google can update their emails
+            if ( !userFromDB.google ) {
+                restUser.email = email;
+            } else if ( email !== userFromDB.email ) {
+                return res.status(400).json({
+                    ok: false,
+                    msg: `Google users can not change their emails`
+                }) 
+            }
+            
         }
         
         // encrypt password

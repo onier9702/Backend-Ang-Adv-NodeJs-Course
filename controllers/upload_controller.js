@@ -10,7 +10,7 @@ const uploadFile = async (req = request, res = response) => {
     const { type, id } = req.params;
     const typesPermitted = [ 'doctor', 'user', 'hospital' ];
     if ( !typesPermitted.includes(type) ) {
-        res.status(400).json({
+        return res.status(400).json({
             ok: false,
             msg: `Just [ ${typesPermitted} ] are allowed`
         })
@@ -24,16 +24,14 @@ const uploadFile = async (req = request, res = response) => {
         });
     }
 
-    console.log('test');
     // Image Procedure
     const file = req.files.file; // extract file from request
     const cutName = file.name.split('.');
     const extension = cutName[cutName.length -1];
-    console.log('extensin: ', extension);
 
-    const validExtensions = [ 'jpeg', ' png', ' jpg' ];
+    const validExtensions = [ 'jpeg', 'png', 'jpg' ];
     if ( !validExtensions.includes(extension) ) {
-        res.status(400).json({
+        return res.status(400).json({
             ok: false,
             msg: `Just extensions [ ${validExtensions} ] are allowed`
         })
