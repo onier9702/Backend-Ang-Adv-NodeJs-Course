@@ -1,6 +1,6 @@
 const { Router } = require("express");
 const { check } = require("express-validator");
-const { deleteDoctor, updateDoctor, createDoctor, getDoctors } = require("../controllers/doctor_controller");
+const { deleteDoctor, updateDoctor, createDoctor, getDoctors, getDoctorByID } = require("../controllers/doctor_controller");
 
 const { validateFields } = require("../middlewares/validate-fields");
 const { validateJWT } = require("../middlewares/validateJWT");
@@ -12,12 +12,20 @@ const { validateJWT } = require("../middlewares/validateJWT");
 
 const router = Router();
 
-// public
+//
 router.get('/', 
     [
         validateJWT
     ],
     getDoctors
+)
+
+//
+router.get('/:id', 
+    [
+        validateJWT
+    ],
+    getDoctorByID
 )
 
 // private

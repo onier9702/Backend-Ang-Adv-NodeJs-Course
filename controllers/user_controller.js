@@ -8,14 +8,14 @@ const getUser = async ( req = request, res ) => {
     try {
 
         // pagination
-        const { skip = 0, limit = 2 } = req.query;
+        const { since = 0, limit = 2 } = req.query;
         
         // const users = await User.find({}, 'name'); // some field
 
         const [ count, users ] = await Promise.all([
             User.countDocuments(),
             User.find({}, 'name email img role google')
-                                .skip( skip )
+                                .skip( since )
                                 .limit( limit )
         ]) 
         res.json({

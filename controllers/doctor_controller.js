@@ -21,6 +21,33 @@ const getDoctors = async (req, res = response ) => {
 
 }
 
+const getDoctorByID = async (req, res = response) => {
+
+    const id = req.params.id;
+
+    try {
+
+        const doctorFromDB = await Doctor.findById( id )
+                                    .populate('user', 'name uid img')
+                                    .populate('hospital', 'name id img');
+        if (!doctorFromDB) {
+            return res.status(400).json({
+                ok: false,
+                msg: `Doctor with ID: ${id} not found`
+            })
+        }
+
+        res.status(200).json({
+            ok: true,
+            doctor: doctorFromDB
+        })
+        
+    } catch (error) {
+        handleErrosDB(error);
+    }
+
+}
+
 const createDoctor = async ( req, res = response ) => {
 
     const uid = req.uid;  // uid is printed inside request in token verification before
@@ -112,6 +139,7 @@ const handleErrosDB = (err) => {
 module.exports = {
     createDoctor,
     getDoctors,
+    getDoctorByID,
     updateDoctor,
-    deleteDoctor
+    deleteDoctor,
 }
