@@ -17,17 +17,24 @@ const UserSchema = Schema({
         type: String,
         required: true
     },
+    age: {
+        type: Number,
+        required: false
+    },
     img: {
         type: String
     },
     role: {
-        type: String,
-        required: true,
-        default: 'USER_ROLE'
+        type: Array,
+        default: ['USER_ROLE']
     },
     google: {
         type: Boolean,
         default: false
+    },
+    isActive: {
+        type: Boolean,
+        default: true
     },
     hospital: {
         type: Schema.Types.ObjectId,

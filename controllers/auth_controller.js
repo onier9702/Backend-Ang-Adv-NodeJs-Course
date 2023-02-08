@@ -1,8 +1,11 @@
 const { response } = require("express");
 const bcrypt = require('bcryptjs');
+
 const User = require('../models/user');
+
 const { generateJWT } = require("../helpers/generateJWT");
 const verifyGoogle = require("../helpers/google-verify");
+const { menuFrontend } = require("../helpers/menu-frontend");
 
 
 const Login = async (req, res = response) => {
@@ -34,7 +37,8 @@ const Login = async (req, res = response) => {
         res.status(200).json({
             ok: true,
             user: userDB,
-            token
+            token,
+            menu: menuFrontend( userDB.role )
         })
         
     } catch (error) {
@@ -71,16 +75,18 @@ const LoginGoogle = async (req, res=response) => {
             user.google = true; // user have both authentication
         }
     
-        // generate JWT
-        const token = await generateJWT(userDB._id);
-    
         // save user
-        await user.save();
+        const userSaved = await user.save();
+
+        // generate JWT
+        const token = await generateJWT(userSaved.uid);
+    
 
         res.json({
             ok: true,
             user,
-            token
+            token,
+            menu: menuFrontend( userSaved.role )
         })
         
     } catch (error) {
@@ -107,7 +113,8 @@ const RevalidateToken = async (req, res=response) => {
         res.status(200).json({
             ok: true,
             user,
-            token
+            token,
+            menu: menuFrontend( user.role )
         })
 
     } catch (error) {

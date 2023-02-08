@@ -11,17 +11,26 @@ const searchAll = async (req = request, res = response) => {
 
         const regex = RegExp(terminus, 'i'); // 'i': means insensitive
 
-        const resultPromises = await Promise.all([
+        // const resultPromises = await Promise.all([
+        //     User.find({ name: regex }),
+        //     Hospital.find({ name: regex }),
+        //     Doctor.find({ name: regex }),
+        // ]);
+
+        // const result = resultPromises.filter( res => res.length); // return only who is not empty array[] 
+
+        const [users, hospitals, doctors] = await Promise.all([
             User.find({ name: regex }),
             Hospital.find({ name: regex }),
             Doctor.find({ name: regex }),
         ]);
 
-        const result = resultPromises.filter( res => res.length); // return only who is not empty array[] 
 
         res.status(200).json({
             ok: true,
-            result
+            users,
+            hospitals,
+            doctors,
         })
         
     } catch (error) {
